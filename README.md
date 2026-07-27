@@ -8,8 +8,8 @@ Edit the table below to enable/disable badges per repo, then run sync.
 
 | Repo | Last Worked | Status | Version | HA | HACS | HACS Val | Hassfest | CI | Release | Built w/AI |
 |------|:-----------:|:------:|:-------:|:--:|:----:|:--------:|:--------:|:--:|:-------:|:----------:|
-| GithubConfigSync | 27/07/2026 | experimental | 1.4.1 | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
-| GithubConfigSync-dev | 27/07/2026 | experimental | | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
+| GithubConfigSync | 27/07/2026 | experimental | 1.4.1 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| GithubConfigSync-dev | 27/07/2026 | experimental | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | crossbatterychargeguard | 27/07/2026 | experimental | 0.1.29 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | ha-ethex | 27/07/2026 | experimental | 0.1.3 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | KirkHillWindFarm | 27/07/2026 | experimental | 4.6.30 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
