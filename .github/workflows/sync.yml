@@ -28,7 +28,7 @@ jobs:
           done
 
       - name: Run sync
-        run: python3 sync_badges.py --apply --repos-dir ../repos
+        run: python3 sync_badges.py --apply --update-table --repos-dir ../repos
 
       - name: Push changes
         run: |
