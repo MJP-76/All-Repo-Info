@@ -427,12 +427,23 @@ def patch_readme(readme_text, config, enabled_badges, owner, repo):
             break
     ref_start += 1
 
+    new_refs = build_badge_refs(config, enabled_badges, owner, repo)
     if ref_start <= ref_end:
+        # Replace existing ref block
         had_blank_before = ref_start > 0 and lines[ref_start - 1].strip() == ""
-        new_refs = build_badge_refs(config, enabled_badges, owner, repo)
         lines[ref_start:ref_end + 1] = new_refs.split("\n")
         if had_blank_before and ref_start > 0 and lines[ref_start - 1].strip() != "":
             lines.insert(ref_start, "")
+    else:
+        # No existing refs — append at end
+        last_non_blank = len(lines) - 1
+        while last_non_blank >= 0 and lines[last_non_blank].strip() == "":
+            last_non_blank -= 1
+        insert_at = last_non_blank + 1
+        lines.insert(insert_at, "")
+        insert_at += 1
+        for j, rl in enumerate(new_refs.split("\n")):
+            lines.insert(insert_at + j, rl)
 
     return "\n".join(lines)
 
