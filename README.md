@@ -22,7 +22,7 @@ Edit the table below to enable/disable badges per repo, then run sync.
 
 ### Option 1: GitHub Action (Recommended)
 
-[![Run Sync][badge-run-sync]][workflow-sync]
+<a href="https://github.com/MJP-76/All-Repo-Info/actions/workflows/sync.yml" target="_blank"><img src="https://img.shields.io/badge/Run%20Sync-Click%20Here-blue?style=for-the-badge&logo=githubactions&logoColor=white" alt="Run Sync"></a>
 
 ### Option 2: Local Script
 
