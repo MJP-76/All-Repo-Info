@@ -31,8 +31,8 @@
     },
     "ci": {
       "display": "CI",
-      "image": "https://github.com/{owner}/{repo}/actions/workflows/validate.yml/badge.svg",
-      "workflow": "validate.yml"
+      "image": "https://github.com/{owner}/{repo}/actions/workflows/ci.yml/badge.svg",
+      "workflow": "ci.yml"
     },
     "release": {
       "display": "Release",

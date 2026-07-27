@@ -1,0 +1,48 @@
+name: Sync Badges
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - "README.md"
+      - "repo_badges.json"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Clone sibling repos
+        run: |
+          mkdir -p ../repos
+          cd ../repos
+          REPOS="GithubConfigSync crossbatterychargeguard ha-ethex KirkHillWindFarm GraigFathaWindFarm DerrilWaterSolarPark"
+          for repo in $REPOS; do
+            git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/MJP-76/$repo.git 2>/dev/null || echo "SKIP: $repo"
+          done
+
+      - name: Run sync
+        run: python3 sync_badges.py --apply --repos-dir ../repos
+
+      - name: Push changes
+        run: |
+          cd ../repos
+          REPOS="GithubConfigSync crossbatterychargeguard ha-ethex KirkHillWindFarm GraigFathaWindFarm DerrilWaterSolarPark"
+          for repo in $REPOS; do
+            if [ -d "$repo" ]; then
+              cd $repo
+              if git diff --quiet; then
+                echo "SKIP: $repo (no changes)"
+              else
+                git push origin main 2>/dev/null || git push origin master 2>/dev/null || echo "PUSH FAILED: $repo"
+                echo "PUSHED: $repo"
+              fi
+              cd ..
+            fi
+          done
