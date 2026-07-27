@@ -22,7 +22,7 @@ jobs:
         run: |
           mkdir -p ../repos
           cd ../repos
-          REPOS="GithubConfigSync crossbatterychargeguard ha-ethex KirkHillWindFarm GraigFathaWindFarm DerrilWaterSolarPark"
+          REPOS="GithubConfigSync GithubConfigSync-dev crossbatterychargeguard ha-ethex KirkHillWindFarm GraigFathaWindFarm DerrilWaterSolarPark"
           for repo in $REPOS; do
             git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/MJP-76/$repo.git 2>/dev/null || echo "SKIP: $repo"
           done
@@ -33,7 +33,7 @@ jobs:
       - name: Push changes
         run: |
           cd ../repos
-          REPOS="GithubConfigSync crossbatterychargeguard ha-ethex KirkHillWindFarm GraigFathaWindFarm DerrilWaterSolarPark"
+          REPOS="GithubConfigSync GithubConfigSync-dev crossbatterychargeguard ha-ethex KirkHillWindFarm GraigFathaWindFarm DerrilWaterSolarPark"
           for repo in $REPOS; do
             if [ -d "$repo" ]; then
               cd $repo
