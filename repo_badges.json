@@ -1,0 +1,82 @@
+{
+  "repos": [
+    "GithubConfigSync",
+    "crossbatterychargeguard",
+    "ha-ethex",
+    "KirkHillWindFarm",
+    "GraigFathaWindFarm",
+    "DerrilWaterSolarPark"
+  ],
+  "owner": "MJP-76",
+  "badges": {
+    "home_assistant": {
+      "display": "Home Assistant",
+      "image": "https://img.shields.io/badge/Home%20Assistant-41BDF5?style=flat-square&logo=homeassistant&logoColor=white",
+      "link": "https://www.home-assistant.io/"
+    },
+    "hacs": {
+      "display": "HACS",
+      "image": "https://img.shields.io/badge/HACS-Custom-41BDF5.svg",
+      "link": "https://github.com/hacs/integration"
+    },
+    "hacs_validation": {
+      "display": "HACS Validation",
+      "image": "https://img.shields.io/badge/HACS%20Validation-passing-brightgreen",
+      "workflow": "validate.yml"
+    },
+    "hassfest": {
+      "display": "Hassfest",
+      "image": "https://img.shields.io/github/actions/workflow/status/{owner}/{repo}/hassfest.yml?branch=main&label=Hassfest",
+      "workflow": "hassfest.yml"
+    },
+    "ci": {
+      "display": "CI",
+      "image": "https://github.com/{owner}/{repo}/actions/workflows/ci.yml/badge.svg",
+      "workflow": "ci.yml"
+    },
+    "release": {
+      "display": "Release",
+      "image": "https://img.shields.io/github/v/release/{owner}/{repo}?style=flat&label=Release",
+      "link": "releases"
+    },
+    "status": {
+      "display": "Status",
+      "image": "https://img.shields.io/badge/Status-experimental-yellow"
+    },
+    "built_with_ai": {
+      "display": "Built with AI",
+      "image": "https://img.shields.io/badge/Built%20with-AI-black?logo=openai&logoColor=white",
+      "link": "https://openai.com"
+    }
+  },
+  "badge_order": [
+    "home_assistant",
+    "hacs",
+    "hacs_validation",
+    "hassfest",
+    "ci",
+    "release",
+    "status",
+    "built_with_ai"
+  ],
+  "support_me": {
+    "text": "If you find this project useful, and would like to help support its continued development, you can do so here:",
+    "buttons": [
+      {
+        "label": "Buy Me a Coffee",
+        "image": "https://img.shields.io/badge/Buy%20Me%20a%20Coffee-FFDD00?style=for-the-badge&logo=buymeacoffee&logoColor=000000",
+        "link": "https://www.buymeacoffee.com/mjp76"
+      },
+      {
+        "label": "Ko-fi",
+        "image": "https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=ffffff",
+        "link": "https://ko-fi.com/mjp76"
+      },
+      {
+        "label": "Octopus Energy — you get £50, I get £50",
+        "image": "https://img.shields.io/badge/Octopus%20Energy-%E2%80%94%20you%20get%20%C2%A350%2C%20I%20get%20%C2%A350-14294A?style=for-the-badge&logo=octopus-energy&logoColor=ffffff",
+        "link": "https://share.octopus.energy/iron-moose-196"
+      }
+    ]
+  }
+}
