@@ -63,6 +63,7 @@ BADGE_COLUMNS = [
     "hassfest",         # Hassfest
     "ci",               # CI
     "release",          # Release
+    "status",           # Status
     "built_with_ai",    # Built w/AI
 ]
 
@@ -296,7 +297,7 @@ def update_badge_matrix_table(readme_text, badge_matrix):
     return "\n".join(result)
 
 
-def build_badge_block(config, enabled_badges, owner, repo):
+def build_badge_block(config, enabled_badges, owner, repo, status="experimental"):
     lines = []
     for name in BADGE_COLUMNS:
         if not enabled_badges.get(name, False):
@@ -305,7 +306,10 @@ def build_badge_block(config, enabled_badges, owner, repo):
         display = badge.get("display", name.replace("_", " ").title())
         ref = badge_ref_name(name)
 
-        if "workflow" in badge:
+        if name == "status":
+            color = "yellow" if status == "experimental" else "red" if status == "archived" else "brightgreen"
+            lines.append(f"![{display}][badge-{ref}]")
+        elif "workflow" in badge:
             lines.append(f"[![{display}][badge-{ref}]][workflow-{ref}]")
         elif "link" in badge:
             link = badge["link"]
@@ -319,14 +323,18 @@ def build_badge_block(config, enabled_badges, owner, repo):
     return "\n".join(lines)
 
 
-def build_badge_refs(config, enabled_badges, owner, repo):
+def build_badge_refs(config, enabled_badges, owner, repo, status="experimental"):
     lines = []
     for name in BADGE_COLUMNS:
         if not enabled_badges.get(name, False):
             continue
         badge = config["badges"][name]
         ref = badge_ref_name(name)
-        image = badge["image"].replace("{owner}", owner).replace("{repo}", repo)
+        if name == "status":
+            color = "yellow" if status == "experimental" else "red" if status == "archived" else "brightgreen"
+            image = f"https://img.shields.io/badge/Status-{status}-{color}"
+        else:
+            image = badge["image"].replace("{owner}", owner).replace("{repo}", repo)
         lines.append(f"[badge-{ref}]: {image}")
         if "workflow" in badge:
             link = f"https://github.com/{owner}/{repo}/actions/workflows/{badge['workflow']}"
@@ -353,7 +361,7 @@ def build_support_me(config):
     return "\n".join(lines)
 
 
-def patch_readme(readme_text, config, enabled_badges, owner, repo):
+def patch_readme(readme_text, config, enabled_badges, owner, repo, status="experimental"):
     lines = readme_text.split("\n")
 
     # --- 1. Replace badge block ---
@@ -384,14 +392,14 @@ def patch_readme(readme_text, config, enabled_badges, owner, repo):
                 break
 
     if badge_start is not None:
-        new_block = build_badge_block(config, enabled_badges, owner, repo)
+        new_block = build_badge_block(config, enabled_badges, owner, repo, status=status)
         had_trailing_blank = lines[badge_end].strip() == ""
         lines[badge_start:badge_end + 1] = new_block.split("\n")
         if had_trailing_blank:
             insert_at = badge_start + len(new_block.split("\n"))
             lines.insert(insert_at, "")
     elif title_idx is not None:
-        new_block = build_badge_block(config, enabled_badges, owner, repo)
+        new_block = build_badge_block(config, enabled_badges, owner, repo, status=status)
         insert_at = title_idx + 1
         lines.insert(insert_at, "")
         insert_at += 1
@@ -427,7 +435,7 @@ def patch_readme(readme_text, config, enabled_badges, owner, repo):
             break
     ref_start += 1
 
-    new_refs = build_badge_refs(config, enabled_badges, owner, repo)
+    new_refs = build_badge_refs(config, enabled_badges, owner, repo, status=status)
     if ref_start <= ref_end:
         # Replace existing ref block
         had_blank_before = ref_start > 0 and lines[ref_start - 1].strip() == ""
@@ -455,7 +463,7 @@ def git_cmd(repo_path, *args):
     return result.stdout.strip(), result.returncode
 
 
-def process_repo(config, repo_name, enabled_badges, apply=False, repos_dir=None):
+def process_repo(config, repo_name, enabled_badges, status="experimental", apply=False, repos_dir=None):
     owner = config["owner"]
     repo_path = repos_dir / repo_name
     if not repo_path.exists():
@@ -479,7 +487,7 @@ def process_repo(config, repo_name, enabled_badges, apply=False, repos_dir=None)
         return False
 
     original = readme.read_text()
-    patched = patch_readme(original, config, enabled_badges, owner, repo_name)
+    patched = patch_readme(original, config, enabled_badges, owner, repo_name, status=status)
 
     if original == patched:
         print(f"  OK: {repo_name} already up to date")
@@ -604,12 +612,13 @@ def main():
     for repo in repos:
         repo_info = badge_matrix.get(repo, {})
         enabled = repo_info.get("badges", {}) if isinstance(repo_info, dict) else repo_info
+        status = repo_info.get("status", "experimental") if isinstance(repo_info, dict) else "experimental"
         if not enabled:
             print(f"\n{repo}:")
             print(f"  SKIP: not found in badge matrix")
             continue
         print(f"\n{repo}:")
-        if process_repo(config, repo, enabled, apply=args.apply, repos_dir=args.repos_dir):
+        if process_repo(config, repo, enabled, status=status, apply=args.apply, repos_dir=args.repos_dir):
             changed += 1
 
     print(f"\n{'Done' if args.apply else 'Preview'}: {changed} repo(s) {'updated' if args.apply else 'need updates'}")
