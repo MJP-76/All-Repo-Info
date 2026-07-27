@@ -2,6 +2,7 @@
 """Sync badges and support-me section across all repos.
 
 Reads the badge matrix table from README.md to determine which badges each repo should have.
+Auto-updates Last Worked, Status, and Version columns from repo data.
 
 Usage:
     python sync_badges.py                  # preview all repos
@@ -14,6 +15,7 @@ import json
 import re
 import subprocess
 import sys
+from datetime import datetime, timezone
 from pathlib import Path
 
 SCRIPT_DIR = Path(__file__).resolve().parent
@@ -21,7 +23,7 @@ CONFIG_PATH = SCRIPT_DIR / "repo_badges.json"
 README_PATH = SCRIPT_DIR / "README.md"
 DEFAULT_REPOS_DIR = SCRIPT_DIR.parent
 
-# Column order must match the README table
+# Badge columns only (not metadata columns)
 BADGE_COLUMNS = [
     "home_assistant",   # HA
     "hacs",             # HACS
@@ -29,7 +31,6 @@ BADGE_COLUMNS = [
     "hassfest",         # Hassfest
     "ci",               # CI
     "release",          # Release
-    "status",           # Status
     "built_with_ai",    # Built w/AI
 ]
 
@@ -42,11 +43,10 @@ def load_config():
 def parse_badge_matrix(readme_text):
     """Parse the badge matrix table from README.md.
     
-    Returns dict: {repo_name: {badge_name: bool}}
+    Returns dict: {repo_name: {"badges": {badge_name: bool}, "last_worked": str, "status": str, "version": str}}
     """
     repos = {}
     in_table = False
-    headerParsed = False
     
     for line in readme_text.split("\n"):
         stripped = line.strip()
@@ -58,14 +58,12 @@ def parse_badge_matrix(readme_text):
         
         # Skip separator line
         if in_table and stripped.startswith("|------"):
-            headerParsed = True
             continue
         
         # Parse table rows
-        if in_table and headerParsed and stripped.startswith("|"):
+        if in_table and stripped.startswith("|"):
             cells = [c.strip() for c in stripped.split("|")]
-            # cells[0] and cells[-1] are empty (from leading/trailing |)
-            cells = cells[1:-1]
+            cells = cells[1:-1]  # remove empty first/last from leading/trailing |
             
             if len(cells) < 2:
                 continue
@@ -74,24 +72,124 @@ def parse_badge_matrix(readme_text):
             if not repo_name or repo_name == "Repo":
                 continue
             
+            # Metadata columns: Last Worked (1), Status (2), Version (3)
+            last_worked = cells[1].strip() if len(cells) > 1 else "—"
+            status = cells[2].strip() if len(cells) > 2 else "experimental"
+            version = cells[3].strip() if len(cells) > 3 else "—"
+            
+            # Badge columns start at index 4
             badges = {}
             for i, badge_name in enumerate(BADGE_COLUMNS):
-                if i + 1 < len(cells):
-                    cell = cells[i + 1].strip()
+                col_idx = i + 4
+                if col_idx < len(cells):
+                    cell = cells[col_idx].strip()
                     badges[badge_name] = cell in ("✅", "☑️")
                 else:
                     badges[badge_name] = False
             
-            repos[repo_name] = badges
+            repos[repo_name] = {
+                "badges": badges,
+                "last_worked": last_worked,
+                "status": status,
+                "version": version,
+            }
         
-        elif in_table and headerParsed and not stripped.startswith("|"):
-            break  # End of table
+        elif in_table and not stripped.startswith("|"):
+            break
     
     return repos
 
 
 def badge_ref_name(name):
     return name.replace("_", "-")
+
+
+def get_last_commit_date(repo_path):
+    """Get the date of the most recent commit."""
+    result = subprocess.run(
+        ["git", "log", "-1", "--format=%ci"],
+        cwd=repo_path, capture_output=True, text=True,
+    )
+    if result.returncode == 0 and result.stdout.strip():
+        try:
+            dt = datetime.fromisoformat(result.stdout.strip())
+            return dt.strftime("%Y-%m-%d")
+        except ValueError:
+            pass
+    return "—"
+
+
+def get_version(repo_path):
+    """Get version from manifest.json or VERSION file."""
+    # Try manifest.json first
+    for domain_dir in (repo_path / "custom_components").iterdir() if (repo_path / "custom_components").exists() else []:
+        manifest = domain_dir / "manifest.json"
+        if manifest.exists():
+            try:
+                data = json.loads(manifest.read_text())
+                return data.get("version", "—")
+            except (json.JSONDecodeError, KeyError):
+                pass
+    
+    # Try VERSION file
+    version_file = repo_path / "VERSION"
+    if version_file.exists():
+        return version_file.read_text().strip()
+    
+    # Try config.yaml (for add-ons)
+    config_yaml = repo_path / "config.yaml"
+    if config_yaml.exists():
+        try:
+            import yaml
+            data = yaml.safe_load(config_yaml.read_text())
+            return data.get("version", "—")
+        except Exception:
+            pass
+    
+    return "—"
+
+
+def update_readme_table(readme_text, repo_data):
+    """Update the badge matrix table in README with fresh metadata."""
+    lines = readme_text.split("\n")
+    new_lines = []
+    in_table = False
+    
+    for line in lines:
+        stripped = line.strip()
+        
+        if stripped.startswith("| Repo |"):
+            in_table = True
+            new_lines.append(line)
+            continue
+        
+        if in_table and stripped.startswith("|------"):
+            new_lines.append(line)
+            continue
+        
+        if in_table and stripped.startswith("|"):
+            cells = [c.strip() for c in stripped.split("|")]
+            cells = cells[1:-1]
+            
+            repo_name = cells[0].strip()
+            if repo_name in repo_data:
+                data = repo_data[repo_name]
+                # Update metadata columns (indices 1-3), keep badge columns (4+) as-is
+                cells[1] = data["last_worked"]
+                cells[2] = data["status"]
+                cells[3] = data["version"]
+                new_line = "| " + " | ".join(cells) + " |"
+                new_lines.append(new_line)
+            else:
+                new_lines.append(line)
+            continue
+        
+        if in_table and not stripped.startswith("|"):
+            in_table = False
+        
+        new_lines.append(line)
+    
+    return "\n".join(new_lines)
 
 
 def build_badge_block(config, enabled_badges, owner, repo):
@@ -291,6 +389,7 @@ def main():
     parser.add_argument("--apply", action="store_true", help="Commit and push changes")
     parser.add_argument("--repo", help="Only process this repo")
     parser.add_argument("--repos-dir", type=Path, default=DEFAULT_REPOS_DIR)
+    parser.add_argument("--update-table", action="store_true", help="Update README table with fresh metadata")
     args = parser.parse_args()
 
     config = load_config()
@@ -303,6 +402,33 @@ def main():
         print(f"ERROR: {README_PATH} not found")
         sys.exit(1)
 
+    # Collect fresh metadata from repos
+    repo_metadata = {}
+    for repo_name in badge_matrix:
+        repo_path = find_repo(repo_name, args.repos_dir)
+        if repo_path:
+            repo_metadata[repo_name] = {
+                "last_worked": get_last_commit_date(repo_path),
+                "status": badge_matrix[repo_name]["status"],
+                "version": get_version(repo_path),
+            }
+        else:
+            repo_metadata[repo_name] = {
+                "last_worked": badge_matrix[repo_name]["last_worked"],
+                "status": badge_matrix[repo_name]["status"],
+                "version": badge_matrix[repo_name]["version"],
+            }
+
+    # Update README table if requested
+    if args.update_table:
+        updated_readme = update_readme_table(readme, repo_metadata)
+        if updated_readme != readme:
+            README_PATH.write_text(updated_readme)
+            print("Updated README table with fresh metadata")
+            # Re-read for badge sync
+            readme = updated_readme
+            badge_matrix = parse_badge_matrix(readme)
+
     if args.repo:
         repos = [args.repo]
     else:
@@ -310,7 +436,8 @@ def main():
 
     changed = 0
     for repo in repos:
-        enabled = badge_matrix.get(repo, {})
+        repo_info = badge_matrix.get(repo, {})
+        enabled = repo_info.get("badges", {}) if isinstance(repo_info, dict) else repo_info
         if not enabled:
             print(f"\n{repo}:")
             print(f"  SKIP: not found in badge matrix")
@@ -320,6 +447,18 @@ def main():
             changed += 1
 
     print(f"\n{'Done' if args.apply else 'Preview'}: {changed} repo(s) {'updated' if args.apply else 'need updates'}")
+
+
+def find_repo(repo_name, repos_dir):
+    """Find a repo directory."""
+    repo_path = repos_dir / repo_name
+    if repo_path.exists():
+        return repo_path
+    for base in [Path("/data"), Path("/data/.cache/opencode-tmp")]:
+        candidate = base / repo_name
+        if candidate.exists():
+            return candidate
+    return None
 
 
 if __name__ == "__main__":

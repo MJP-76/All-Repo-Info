@@ -6,14 +6,16 @@ Central config for badges and support-me sections across all repos.
 
 Edit the table below to enable/disable badges per repo, then run sync.
 
-| Repo | HA | HACS | HACS Val | Hassfest | CI | Release | Status | Built w/AI |
-|------|:--:|:----:|:--------:|:--------:|:--:|:-------:|:------:|:----------:|
-| GithubConfigSync | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
-| crossbatterychargeguard | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| ha-ethex | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| KirkHillWindFarm | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| GraigFathaWindFarm | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| DerrilWaterSolarPark | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Repo | Last Worked | Status | Version | HA | HACS | HACS Val | Hassfest | CI | Release | Built w/AI |
+|------|:-----------:|:------:|:-------:|:--:|:----:|:--------:|:--------:|:--:|:-------:|:----------:|
+| GithubConfigSync | 2026-07-27 | experimental | 1.4.1 | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ |
+| crossbatterychargeguard | 2026-07-27 | experimental | 0.1.29 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| ha-ethex | 2026-07-27 | experimental | 0.1.3 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| KirkHillWindFarm | 2026-07-27 | experimental | 4.6.30 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| GraigFathaWindFarm | 2026-07-27 | experimental | 1.0.4 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| DerrilWaterSolarPark | 2026-07-27 | experimental | 1.0.0 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+
+> **Last Worked** = date of most recent commit. **Version** = from `manifest.json` or `VERSION` file. These are auto-updated by the sync script.
 
 ## How to Sync
 
