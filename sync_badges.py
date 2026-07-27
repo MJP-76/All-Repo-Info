@@ -78,7 +78,7 @@ def parse_badge_matrix(readme_text):
             for i, badge_name in enumerate(BADGE_COLUMNS):
                 if i + 1 < len(cells):
                     cell = cells[i + 1].strip()
-                    badges[badge_name] = cell == "✅"
+                    badges[badge_name] = cell in ("✅", "☑️")
                 else:
                     badges[badge_name] = False
             

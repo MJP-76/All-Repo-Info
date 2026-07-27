@@ -8,7 +8,7 @@ Edit the table below to enable/disable badges per repo, then run sync.
 
 | Repo | HA | HACS | HACS Val | Hassfest | CI | Release | Status | Built w/AI |
 |------|:--:|:----:|:--------:|:--------:|:--:|:-------:|:------:|:----------:|
-| GithubConfigSync | ✅ | ✅ | ✅ | ✅ | — | ✅ | ✅ | ✅ |
+| GithubConfigSync | ✅ | ✅ | ✅ | ✅ | ❌ | ✅ | ✅ | ✅ |
 | crossbatterychargeguard | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | ha-ethex | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | KirkHillWindFarm | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
