@@ -18,31 +18,52 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Clone sibling repos
+      - name: Discover and clone all repos
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           mkdir -p ../repos
           cd ../repos
-          REPOS="GithubConfigSync GithubConfigSync-dev crossbatterychargeguard ha-ethex KirkHillWindFarm GraigFathaWindFarm DerrilWaterSolarPark"
-          for repo in $REPOS; do
-            git clone https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/MJP-76/$repo.git 2>/dev/null || echo "SKIP: $repo"
+          # Fetch all repo names via GitHub API (handles pagination)
+          python3 -c "
+          import json, urllib.request, os
+          token = os.environ['GITHUB_TOKEN']
+          repos = []
+          page = 1
+          while True:
+              req = urllib.request.Request(
+                  f'https://api.github.com/user/repos?per_page=100&page={page}&type=all',
+                  headers={'Authorization': f'token {token}', 'Accept': 'application/vnd.github+json'}
+              )
+              data = json.loads(urllib.request.urlopen(req).read())
+              if not data: break
+              for r in data:
+                  repos.append(r['name'])
+              page += 1
+          for name in sorted(set(repos)):
+              print(name)
+          " | while read repo; do
+            [ "$repo" = "All-Repo-Info" ] && continue
+            git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/MJP-76/${repo}.git" 2>/dev/null || echo "SKIP: $repo"
           done
 
       - name: Run sync
-        run: python3 sync_badges.py --apply --update-table --repos-dir ../repos
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python3 sync_badges.py --apply --update-table --discover --repos-dir ../repos
 
-      - name: Push changes
+      - name: Push changes to all repos
         run: |
           cd ../repos
-          REPOS="GithubConfigSync GithubConfigSync-dev crossbatterychargeguard ha-ethex KirkHillWindFarm GraigFathaWindFarm DerrilWaterSolarPark"
-          for repo in $REPOS; do
-            if [ -d "$repo" ]; then
-              cd $repo
-              if git diff --quiet; then
-                echo "SKIP: $repo (no changes)"
-              else
-                git push origin main 2>/dev/null || git push origin master 2>/dev/null || echo "PUSH FAILED: $repo"
-                echo "PUSHED: $repo"
-              fi
-              cd ..
+          for dir in */; do
+            repo="${dir%/}"
+            [ "$repo" = "All-Repo-Info" ] && continue
+            cd "$repo"
+            if git diff --quiet; then
+              echo "SKIP: $repo (no changes)"
+            else
+              git push origin main 2>/dev/null || git push origin master 2>/dev/null || echo "PUSH FAILED: $repo"
+              echo "PUSHED: $repo"
             fi
+            cd ..
           done

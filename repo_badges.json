@@ -1,12 +1,17 @@
 {
   "repos": [
+    "crossbatterychargeguard",
+    "DerrilWaterSolarPark",
     "GithubConfigSync",
     "GithubConfigSync-dev",
-    "crossbatterychargeguard",
-    "ha-ethex",
-    "KirkHillWindFarm",
     "GraigFathaWindFarm",
-    "DerrilWaterSolarPark"
+    "ha-ethex",
+    "ha-github-config-sync",
+    "ha-github-config-sync-dev",
+    "ha-zyxel",
+    "KirkHillWindFarm",
+    "RippleEnergyAPI",
+    "RippleEnergyYAML"
   ],
   "owner": "MJP-76",
   "badges": {
@@ -74,7 +79,7 @@
         "link": "https://ko-fi.com/mjp76"
       },
       {
-        "label": "Octopus Energy — you get £50, I get £50",
+        "label": "Octopus Energy \u2014 you get \u00a350, I get \u00a350",
         "image": "https://img.shields.io/badge/Octopus%20Energy-%E2%80%94%20you%20get%20%C2%A350%2C%20I%20get%20%C2%A350-14294A?style=for-the-badge&logo=octopus-energy&logoColor=ffffff",
         "link": "https://share.octopus.energy/iron-moose-196"
       }

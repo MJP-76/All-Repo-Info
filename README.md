@@ -8,13 +8,18 @@ Edit the table below to enable/disable badges per repo, then run sync.
 
 | Repo | Last Worked | Status | Version | HA | HACS | HACS Val | Hassfest | CI | Release | Built w/AI |
 |------|:-----------:|:------:|:-------:|:--:|:----:|:--------:|:--------:|:--:|:-------:|:----------:|
-| GithubConfigSync | 27/07/2026 | experimental | 1.4.1 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| GithubConfigSync-dev | 27/07/2026 | experimental | | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | crossbatterychargeguard | 27/07/2026 | experimental | 0.1.29 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| ha-ethex | 27/07/2026 | experimental | 0.1.3 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| KirkHillWindFarm | 27/07/2026 | experimental | 4.6.30 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| GraigFathaWindFarm | 27/07/2026 | experimental | 1.0.4 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | DerrilWaterSolarPark | 27/07/2026 | experimental | 1.0.0 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| GithubConfigSync | 27/07/2026 | experimental | 1.4.1 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| GithubConfigSync-dev | 27/07/2026 | experimental |  | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| GraigFathaWindFarm | 27/07/2026 | experimental | 1.0.4 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| ha-ethex | 27/07/2026 | experimental | 0.1.3 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| ha-github-config-sync | — | experimental | — | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| ha-github-config-sync-dev | — | experimental | — | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| ha-zyxel | — | experimental | — | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| KirkHillWindFarm | 27/07/2026 | experimental | 4.6.30 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| RippleEnergyAPI | — | archived | — | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| RippleEnergyYAML | — | archived | — | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 
 > **Last Worked** = date of most recent commit. **Version** = from `manifest.json` or `VERSION` file. These are auto-updated by the sync script.
 

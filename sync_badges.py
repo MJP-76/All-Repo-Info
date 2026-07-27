@@ -12,9 +12,11 @@ Usage:
 """
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
+import urllib.request
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -22,6 +24,36 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 CONFIG_PATH = SCRIPT_DIR / "repo_badges.json"
 README_PATH = SCRIPT_DIR / "README.md"
 DEFAULT_REPOS_DIR = SCRIPT_DIR.parent
+
+
+def get_all_repos(owner, token=None):
+    """Fetch all repos for owner via GitHub API (public, private, forks, archived)."""
+    repos = []
+    page = 1
+    while True:
+        url = f"https://api.github.com/user/repos?per_page=100&page={page}&type=all"
+        headers = {"Accept": "application/vnd.github+json"}
+        if token:
+            headers["Authorization"] = f"token {token}"
+        req = urllib.request.Request(url, headers=headers)
+        try:
+            with urllib.request.urlopen(req) as resp:
+                data = json.loads(resp.read())
+        except Exception as e:
+            print(f"WARNING: GitHub API error: {e}")
+            break
+        if not data:
+            break
+        for r in data:
+            if r["owner"]["login"].lower() == owner.lower():
+                repos.append({
+                    "name": r["name"],
+                    "fork": r["fork"],
+                    "archived": r["archived"],
+                    "private": r["private"],
+                })
+        page += 1
+    return repos
 
 # Badge columns only (not metadata columns)
 BADGE_COLUMNS = [
@@ -192,6 +224,78 @@ def update_readme_table(readme_text, repo_data):
     return "\n".join(new_lines)
 
 
+def update_badge_matrix_table(readme_text, badge_matrix):
+    """Add new repos to the badge matrix table in README, sorted alphabetically."""
+    lines = readme_text.split("\n")
+    result = []
+    in_table = False
+    sep_idx = None
+    existing_repos = {}
+    found_table_end = False
+
+    for line in lines:
+        stripped = line.strip()
+
+        if not found_table_end and stripped.startswith("| Repo |"):
+            in_table = True
+            result.append(line)
+            continue
+
+        if in_table and stripped.startswith("|------"):
+            sep_idx = len(result)
+            result.append(line)
+            continue
+
+        if in_table and stripped.startswith("|"):
+            cells = [c.strip() for c in stripped.split("|")]
+            cells = cells[1:-1]
+            repo_name = cells[0].strip()
+            if repo_name:
+                existing_repos[repo_name] = cells
+            continue
+
+        if in_table and not stripped.startswith("|"):
+            in_table = False
+            found_table_end = True
+
+        result.append(line)
+
+    # Merge: existing repos keep their badge columns, new repos get defaults
+    all_repos = set(existing_repos.keys()) | set(badge_matrix.keys())
+    all_repos.discard("All-Repo-Info")
+    sorted_repos = sorted(all_repos, key=str.lower)
+
+    if sep_idx is not None:
+        # Remove existing rows from result (everything after sep_idx until table ends)
+        # Rebuild: header + sep + sorted rows + rest
+        header = result[sep_idx - 1]  # "| Repo | ..."
+        sep = result[sep_idx]         # "|------|..."
+        rest = result[sep_idx + 1:]   # everything after the table
+
+        rows = []
+        for repo_name in sorted_repos:
+            if repo_name in existing_repos:
+                cells = existing_repos[repo_name]
+                # Update metadata from badge_matrix if available
+                if repo_name in badge_matrix:
+                    info = badge_matrix[repo_name]
+                    cells[1] = info.get("last_worked", cells[1])
+                    cells[2] = info.get("status", cells[2])
+                    cells[3] = info.get("version", cells[3])
+                rows.append("| " + " | ".join(cells) + " |")
+            elif repo_name in badge_matrix:
+                info = badge_matrix[repo_name]
+                status = info.get("status", "experimental")
+                version = info.get("version", "—")
+                last_worked = info.get("last_worked", "—")
+                badge_cells = " | ".join(["❌"] * len(BADGE_COLUMNS))
+                rows.append(f"| {repo_name} | {last_worked} | {status} | {version} | {badge_cells} |")
+
+        result = result[:sep_idx - 1] + [header, sep] + rows + rest
+
+    return "\n".join(result)
+
+
 def build_badge_block(config, enabled_badges, owner, repo):
     lines = []
     for name in BADGE_COLUMNS:
@@ -286,6 +390,14 @@ def patch_readme(readme_text, config, enabled_badges, owner, repo):
         if had_trailing_blank:
             insert_at = badge_start + len(new_block.split("\n"))
             lines.insert(insert_at, "")
+    elif title_idx is not None:
+        new_block = build_badge_block(config, enabled_badges, owner, repo)
+        insert_at = title_idx + 1
+        lines.insert(insert_at, "")
+        insert_at += 1
+        for j, bl in enumerate(new_block.split("\n")):
+            lines.insert(insert_at + j, bl)
+        lines.insert(insert_at + len(new_block.split("\n")), "")
 
     # --- 2. Replace support me section ---
     sm_start = None
@@ -390,9 +502,12 @@ def main():
     parser.add_argument("--repo", help="Only process this repo")
     parser.add_argument("--repos-dir", type=Path, default=DEFAULT_REPOS_DIR)
     parser.add_argument("--update-table", action="store_true", help="Update README table with fresh metadata")
+    parser.add_argument("--discover", action="store_true", help="Auto-discover repos via GitHub API and add to matrix")
+    parser.add_argument("--github-token", default=os.environ.get("GITHUB_TOKEN"), help="GitHub token for API access")
     args = parser.parse_args()
 
     config = load_config()
+    owner = config["owner"]
 
     # Read badge matrix from README
     if README_PATH.exists():
@@ -401,6 +516,46 @@ def main():
     else:
         print(f"ERROR: {README_PATH} not found")
         sys.exit(1)
+
+    # Auto-discover repos via GitHub API
+    if args.discover:
+        print("Discovering repos via GitHub API...")
+        all_repos = get_all_repos(owner, args.github_token)
+        discovered_names = {r["name"] for r in all_repos}
+        print(f"Found {len(all_repos)} repos")
+
+        # Add new repos to badge matrix with empty badges
+        new_repos = []
+        for repo_info in all_repos:
+            name = repo_info["name"]
+            if name not in badge_matrix and name != "All-Repo-Info":
+                badge_matrix[name] = {
+                    "badges": {b: False for b in BADGE_COLUMNS},
+                    "last_worked": "—",
+                    "status": "archived" if repo_info["archived"] else "experimental",
+                    "version": "—",
+                }
+                new_repos.append(name)
+                print(f"  Added: {name}" + (" (archived)" if repo_info["archived"] else "") + (" (fork)" if repo_info["fork"] else ""))
+
+        if new_repos:
+            # Update README table with new repos
+            readme = update_badge_matrix_table(readme, badge_matrix)
+            README_PATH.write_text(readme)
+            print(f"Added {len(new_repos)} new repos to README table")
+
+            # Update repo_badges.json
+            repos_json = config.get("repos", [])
+            for name in sorted(badge_matrix.keys()):
+                if name not in repos_json and name != "All-Repo-Info":
+                    repos_json.append(name)
+            config["repos"] = sorted(repos_json)
+            CONFIG_PATH.write_text(json.dumps(config, indent=2) + "\n")
+            print("Updated repo_badges.json")
+
+            # Re-read for processing
+            readme = README_PATH.read_text()
+            badge_matrix = parse_badge_matrix(readme)
 
     # Collect fresh metadata from repos
     repo_metadata = {}
