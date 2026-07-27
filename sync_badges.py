@@ -113,7 +113,7 @@ def get_last_commit_date(repo_path):
     if result.returncode == 0 and result.stdout.strip():
         try:
             dt = datetime.fromisoformat(result.stdout.strip())
-            return dt.strftime("%Y-%m-%d")
+            return dt.strftime("%d/%m/%Y")
         except ValueError:
             pass
     return "—"
