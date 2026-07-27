@@ -1,6 +1,7 @@
 {
   "repos": [
     "GithubConfigSync",
+    "GithubConfigSync-dev",
     "crossbatterychargeguard",
     "ha-ethex",
     "KirkHillWindFarm",
