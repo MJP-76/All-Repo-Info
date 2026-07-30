@@ -7,6 +7,7 @@ on:
     paths:
       - "README.md"
       - "repo_badges.json"
+      - "sync_repos.py"
 
 jobs:
   sync:
@@ -18,46 +19,29 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Discover and clone all repos
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Clone all repos
         run: |
           mkdir -p ../repos
           cd ../repos
-          # Fetch all repo names via GitHub API (handles pagination)
+          # Read repo list from JSON config (no API token needed)
           python3 -c "
-          import json, urllib.request, os
-          token = os.environ['GITHUB_TOKEN']
-          repos = []
-          page = 1
-          while True:
-              req = urllib.request.Request(
-                  f'https://api.github.com/user/repos?per_page=100&page={page}&type=all',
-                  headers={'Authorization': f'token {token}', 'Accept': 'application/vnd.github+json'}
-              )
-              data = json.loads(urllib.request.urlopen(req).read())
-              if not data: break
-              for r in data:
-                  repos.append(r['name'])
-              page += 1
-          for name in sorted(set(repos)):
+          import json
+          data = json.load(open('../All-Repo-Info/repo_badges.json'))
+          for name in data['repos']:
               print(name)
           " | while read repo; do
-            [ "$repo" = "All-Repo-Info" ] && continue
-            git clone "https://x-access-token:${GITHUB_TOKEN}@github.com/MJP-76/${repo}.git" 2>/dev/null || echo "SKIP: $repo"
+            git clone "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/MJP-76/${repo}.git" 2>/dev/null && echo "CLONED: $repo" || echo "SKIP: $repo"
           done
 
       - name: Run sync
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python3 sync_repos.py --apply --update-table --discover --repos-dir ../repos
+        run: python3 sync_repos.py --apply --update-table --repos-dir ../repos
 
       - name: Push changes to all repos
         run: |
           cd ../repos
           for dir in */; do
+            [ -d "$dir" ] || continue
             repo="${dir%/}"
-            [ "$repo" = "All-Repo-Info" ] && continue
             cd "$repo"
             if git diff --quiet; then
               echo "SKIP: $repo (no changes)"
