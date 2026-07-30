@@ -6,16 +6,16 @@ Central config for badges and support-me sections across all repos.
 
 Edit the table below to enable/disable badges per repo, then run sync.
 
-| Repo | Last Worked | Status | Version | HA | HACS | HACS Val | Hassfest | CI | Release | Built w/AI |
-|------|:-----------:|:------:|:-------:|:--:|:----:|:--------:|:--------:|:--:|:-------:|:----------:|
-| ha-dual-battery-control | 27/07/2026 | experimental | 0.1.29 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| DerrilWaterSolarPark | 27/07/2026 | experimental | 1.0.0 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| GithubConfigSync | 27/07/2026 | experimental | 1.4.1 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| GithubConfigSync-dev | 27/07/2026 | experimental |  | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| GraigFathaWindFarm | 27/07/2026 | experimental | 1.0.4 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| ha-ethex | 27/07/2026 | experimental | 0.1.3 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| ha-zyxel | — | experimental | — | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| KirkHillWindFarm | 27/07/2026 | experimental | 4.6.30 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Repo | Last Worked | Type | Version | HA | HACS | HACS Val | Hassfest | CI | Release | Built w/AI |
+|------|:-----------:|:----:|:-------:|:--:|:----:|:--------:|:--------:|:--:|:-------:|:----------:|
+| ha-dual-battery-control | 27/07/2026 | source | 0.1.29 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| DerrilWaterSolarPark | 27/07/2026 | source | 1.0.0 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| GithubConfigSync | 27/07/2026 | source | 1.4.1 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| GithubConfigSync-dev | 27/07/2026 | source |  | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| GraigFathaWindFarm | 27/07/2026 | source | 1.0.4 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| ha-ethex | 27/07/2026 | source | 0.1.3 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| ha-zyxel | — | fork | — | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| KirkHillWindFarm | 27/07/2026 | source | 4.6.30 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 > **Last Worked** = date of most recent commit. **Version** = from `manifest.json` or `VERSION` file. These are auto-updated by the sync script.
 
