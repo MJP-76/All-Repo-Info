@@ -8,7 +8,7 @@ Edit the table below to enable/disable badges per repo, then run sync.
 
 | Repo | Last Worked | Status | Version | HA | HACS | HACS Val | Hassfest | CI | Release | Built w/AI |
 |------|:-----------:|:------:|:-------:|:--:|:----:|:--------:|:--------:|:--:|:-------:|:----------:|
-| crossbatterychargeguard | 27/07/2026 | experimental | 0.1.29 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| ha-dual-battery-control | 27/07/2026 | experimental | 0.1.29 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | DerrilWaterSolarPark | 27/07/2026 | experimental | 1.0.0 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | GithubConfigSync | 27/07/2026 | experimental | 1.4.1 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | GithubConfigSync-dev | 27/07/2026 | experimental |  | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
