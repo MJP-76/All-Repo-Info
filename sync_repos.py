@@ -5,10 +5,10 @@ Reads the badge matrix table from README.md to determine which badges each repo 
 Auto-updates Last Worked, Status, and Version columns from repo data.
 
 Usage:
-    python sync_badges.py                  # preview all repos
-    python sync_badges.py --apply          # commit and push changes
-    python sync_badges.py --repo ha-ethex  # preview one repo
-    python sync_badges.py --repo ha-ethex --apply
+    python sync_repos.py                  # preview all repos
+    python sync_repos.py --apply          # commit and push changes
+    python sync_repos.py --repo ha-ethex  # preview one repo
+    python sync_repos.py --repo ha-ethex --apply
 """
 import argparse
 import json
@@ -503,7 +503,7 @@ def process_repo(config, repo_name, enabled_badges, status="experimental", apply
     if apply:
         readme.write_text(patched)
         git_cmd(repo_path, "add", "README.md")
-        git_cmd(repo_path, "commit", "-m", "docs: sync badges and support-me from central config")
+        git_cmd(repo_path, "commit", "-m", "docs: sync badges and support-me from All-Repo-Info")
         for remote in ["origin", "dev"]:
             for branch in ["main", "master"]:
                 stdout, rc = git_cmd(repo_path, "push", remote, branch)

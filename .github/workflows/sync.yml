@@ -1,4 +1,4 @@
-name: Sync Badges
+name: Sync Repos
 
 on:
   workflow_dispatch:
@@ -50,7 +50,7 @@ jobs:
       - name: Run sync
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: python3 sync_badges.py --apply --update-table --discover --repos-dir ../repos
+        run: python3 sync_repos.py --apply --update-table --discover --repos-dir ../repos
 
       - name: Push changes to all repos
         run: |
