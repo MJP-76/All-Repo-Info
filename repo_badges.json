@@ -1,17 +1,13 @@
 {
   "repos": [
-    "ha-dual-battery-control",
     "DerrilWaterSolarPark",
     "GithubConfigSync",
     "GithubConfigSync-dev",
     "GraigFathaWindFarm",
+    "ha-dual-battery-control",
     "ha-ethex",
-    "ha-github-config-sync",
-    "ha-github-config-sync-dev",
     "ha-zyxel",
-    "KirkHillWindFarm",
-    "RippleEnergyAPI",
-    "RippleEnergyYAML"
+    "KirkHillWindFarm"
   ],
   "owner": "MJP-76",
   "badges": {
