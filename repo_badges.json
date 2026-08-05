@@ -61,6 +61,13 @@
     "status",
     "built_with_ai"
   ],
+  "contributing": {
+    "text": "Contributions are welcome! Please open an issue or submit a pull request on GitHub."
+  },
+  "license": {
+    "name": "MIT",
+    "text": "MIT License — see [LICENSE](LICENSE) for the full text."
+  },
   "support_me": {
     "text": "If you find this project useful, and would like to help support its continued development, you can do so here:",
     "buttons": [

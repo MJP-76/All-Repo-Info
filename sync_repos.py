@@ -353,6 +353,22 @@ def build_support_me(config):
     return "\n".join(lines)
 
 
+def build_footer_sections(config):
+    """Build the Contributing and License sections."""
+    contributing = config.get("contributing", {})
+    license_cfg = config.get("license", {})
+    lines = [
+        "## Contributing\n",
+        contributing.get("text", "Contributions are welcome!"),
+        "\n",
+        f"## License\n",
+        "",
+        license_cfg.get("text", "MIT License — see [LICENSE](LICENSE) for the full text."),
+        "",
+    ]
+    return "\n".join(lines)
+
+
 def patch_readme(readme_text, config, enabled_badges, owner, repo):
     lines = readme_text.split("\n")
 
@@ -414,7 +430,22 @@ def patch_readme(readme_text, config, enabled_badges, owner, repo):
         new_sm = build_support_me(config)
         lines[sm_start:sm_end] = new_sm.split("\n")
 
-    # --- 3. Replace ref block at end ---
+    # --- 3. Replace footer sections (Contributing + License) before ref block ---
+    footer = build_footer_sections(config).split("\n")
+    # Remove any existing Contributing/License sections anywhere in the doc
+    filtered = []
+    i = 0
+    while i < len(lines):
+        if lines[i].strip() in ("## Contributing", "## License"):
+            i += 1
+            while i < len(lines) and lines[i].strip() not in ("## Contributing", "## License") and not (lines[i].strip().startswith("[") and "]: " in lines[i].strip()):
+                i += 1
+            continue
+        filtered.append(lines[i])
+        i += 1
+    lines = filtered
+
+    # --- 4. Replace ref block at end ---
     ref_end = len(lines) - 1
     while ref_end >= 0 and lines[ref_end].strip() == "":
         ref_end -= 1
