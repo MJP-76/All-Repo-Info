@@ -15,6 +15,10 @@ concurrency:
 jobs:
   review:
     runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GH_PAT }}
+      GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      TARGET_REPOS: "GithubConfigSync,KirkHillWindFarm"
     steps:
       - uses: actions/checkout@v5
 
@@ -22,17 +26,13 @@ jobs:
         with:
           python-version: "3.12"
 
-      - name: Run issue review
-        env:
-          GH_TOKEN: ${{ secrets.GH_PAT }}
-          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
-          HA_WEBHOOK_URL: ${{ secrets.HA_WEBHOOK_URL }}
-        run: python3 review_issues.py
+      - name: Run AI code review
+        run: python3 ai_review.py
 
       - name: Upload report
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: review-report
-          path: review_report.md
+          name: ai-review-report
+          path: ai_review_report.md
           if-no-files-found: ignore
