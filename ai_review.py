@@ -362,6 +362,8 @@ def main():
         except Exception as e:
             errors.append(f"{repo}: {e}")
             print(f"  {repo}: ERROR {e}")
+        if repo is not repos[-1]:
+            time.sleep(25)
 
     lines = []
     if created:
