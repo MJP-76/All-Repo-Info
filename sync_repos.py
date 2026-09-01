@@ -569,7 +569,7 @@ def main():
         print(f"ERROR: {README_PATH} not found")
         sys.exit(1)
 
-    # Auto-discover repos via GitHub API
+# Auto-discover repos via GitHub API
     if args.discover:
         print("Discovering repos via GitHub API...")
         all_repos = get_all_repos(owner, args.github_token)
@@ -577,9 +577,11 @@ def main():
         print(f"Found {len(all_repos)} repos")
 
         # Add new repos to badge matrix with empty badges
-        new_repos = []
         for repo_info in all_repos:
             name = repo_info["name"]
+            if repo_info["fork"]:
+                print(f"  Skipped (fork): {name}")
+                continue
             if name not in badge_matrix and name != "All-Repo-Info":
                 badge_matrix[name] = {
                     "badges": {b: False for b in BADGE_COLUMNS},

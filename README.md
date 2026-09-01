@@ -16,7 +16,6 @@ Edit the table below to enable/disable badges per repo, then run sync.
 | GithubConfigSync-dev | 27/07/2026 | source |  | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | GraigFathaWindFarm | 27/07/2026 | source | 1.0.4 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 | ha-ethex | 27/07/2026 | source | 0.1.3 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| ha-zyxel | — | fork | — | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
 | KirkHillWindFarm | 27/07/2026 | source | 4.6.30 | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
 
 > **Last Worked** = date of most recent commit. **Version** = from `manifest.json` or `VERSION` file. These are auto-updated by the sync script.

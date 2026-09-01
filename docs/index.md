@@ -26,7 +26,7 @@ is where you can browse all of them from one place.
 | [ha-dual-battery-control](https://github.com/MJP-76/ha-dual-battery-control) | source | 0.3.3 | [docs](https://MJP-76.github.io/ha-dual-battery-control/) |
 | [ha-ethex](https://github.com/MJP-76/ha-ethex) | source | 0.1.3 | [docs](https://MJP-76.github.io/ha-ethex/) |
 | [ha-schedy-heating](https://github.com/MJP-76/ha-schedy-heating) | source | 1.0.1 | [docs](https://MJP-76.github.io/ha-schedy-heating/) |
-| [ha-zyxel](https://github.com/MJP-76/ha-zyxel) | fork | — | [docs](https://MJP-76.github.io/ha-zyxel/) |
+
 
 !!! note "GithubConfigSync stable / dev tracks"
 
@@ -48,4 +48,3 @@ is where you can browse all of them from one place.
 | Dual battery control | [ha-dual-battery-control](https://MJP-76.github.io/ha-dual-battery-control/) |
 | Ethex investments | [ha-ethex](https://MJP-76.github.io/ha-ethex/) |
 | Schedy heating | [ha-schedy-heating](https://MJP-76.github.io/ha-schedy-heating/) |
-| Zyxel devices | [ha-zyxel](https://MJP-76.github.io/ha-zyxel/) |
