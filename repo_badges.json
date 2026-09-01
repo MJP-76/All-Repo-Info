@@ -11,6 +11,11 @@
   ],
   "owner": "MJP-76",
   "badges": {
+    "documentation": {
+      "display": "Documentation",
+      "image": "https://img.shields.io/badge/Documentation-41BDF5?style=flat-square&logo=bookstack&logoColor=white",
+      "link": "https://MJP-76.github.io/{repo}/"
+    },
     "home_assistant": {
       "display": "Home Assistant",
       "image": "https://img.shields.io/badge/Home%20Assistant-41BDF5?style=flat-square&logo=homeassistant&logoColor=white",
@@ -52,6 +57,7 @@
     }
   },
   "badge_order": [
+    "documentation",
     "home_assistant",
     "hacs",
     "hacs_validation",

@@ -2,6 +2,8 @@
 
 Central config for badges and support-me sections across all repos.
 
+**Documentation:** [https://MJP-76.github.io/All-Repo-Info/](https://MJP-76.github.io/All-Repo-Info/)
+
 ## Badge Matrix
 
 Edit the table below to enable/disable badges per repo, then run sync.

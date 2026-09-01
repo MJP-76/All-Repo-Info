@@ -298,6 +298,10 @@ def update_badge_matrix_table(readme_text, badge_matrix):
 
 def build_badge_block(config, enabled_badges, owner, repo):
     lines = []
+    docs = config["badges"].get("documentation")
+    if docs:
+        display = docs.get("display", "Documentation")
+        lines.append(f"[![{display}][badge-docs]][docs]")
     for name in BADGE_COLUMNS:
         if not enabled_badges.get(name, False):
             continue
@@ -321,6 +325,12 @@ def build_badge_block(config, enabled_badges, owner, repo):
 
 def build_badge_refs(config, enabled_badges, owner, repo):
     lines = []
+    docs = config["badges"].get("documentation")
+    if docs:
+        image = docs["image"].replace("{owner}", owner).replace("{repo}", repo)
+        link = docs["link"].replace("{owner}", owner).replace("{repo}", repo)
+        lines.append(f"[badge-docs]: {image}")
+        lines.append(f"[docs]: {link}")
     for name in BADGE_COLUMNS:
         if not enabled_badges.get(name, False):
             continue
